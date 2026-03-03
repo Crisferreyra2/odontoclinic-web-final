@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clínica Dental | Turnos Online</title>
+  <meta name="description" content="Consultorio odontológico. Pedí tu turno y consultá por urgencias." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text2:#0f172a;
+      --nightText:#eaf1ff;
+      --nightMuted: rgba(234,241,255,.72);
+      --shadow: 0 18px 50px rgba(0,0,0,.30);
+      --teal:#14b8a6; --blue:#4f8cff; --green:#22c55e;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0; font-family:var(--font); color:var(--nightText); background: #0b1220;}
+    body::before{content:''; position:fixed; inset:0; background:url('assets/hero-dental.png') center/cover no-repeat; opacity:.14; filter:saturate(1.05) contrast(1.05); z-index:-3;}
+    body::after{content:''; position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(60% 60% at 20% 30%, rgba(79,140,255,.20), transparent 60%),
+        radial-gradient(50% 50% at 80% 20%, rgba(20,184,166,.18), transparent 55%),
+        linear-gradient(180deg, rgba(11,18,32,.66), rgba(11,18,32,.92));
+    }
+    #particlesCanvas{position:fixed; inset:0; z-index:-4;}
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1120px; margin:0 auto; padding:0 18px}
+
+    header{position:sticky; top:0; z-index:50; backdrop-filter: blur(14px);
+      background: linear-gradient(90deg, rgba(255,255,255,.10), rgba(11,18,32,.70), rgba(255,255,255,.08));
+      border-bottom:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+    }
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:10px}
+    .logo{width:40px;height:40px;border-radius:16px;
+      background:linear-gradient(135deg, rgba(20,184,166,.95), rgba(79,140,255,.95));
+      display:flex;align-items:center;justify-content:center; font-weight:900; color:#071222;
+      box-shadow: 0 12px 26px rgba(0,0,0,.22);
+    }
+    .brand strong{display:block; letter-spacing:.2px; font-size:14px}
+    .brand span{display:block; margin-top:2px; color:var(--nightMuted); font-weight:800; font-size:12px}
+    .links{display:flex; gap:10px; align-items:center}
+    .links a{color:var(--nightMuted); font-weight:900; font-size:13px; padding:10px 10px; border-radius:12px}
+    .links a:hover{background: rgba(255,255,255,.07); color:var(--nightText);}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color:var(--nightText); font-weight:900;
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
+      transform: translateY(0);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease, filter .15s ease;
+      position:relative; overflow:hidden;
+    }
+    .btn:hover{background: rgba(255,255,255,.12); transform: translateY(-2px); box-shadow: 0 14px 28px rgba(0,0,0,.24);}
+    .btn:active{transform: translateY(0);}
+    .btn::after{content:''; position:absolute; top:-40%; left:-60%; width:60%; height:180%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: rotate(18deg); opacity:0;
+    }
+    .btn:hover::after{opacity:1; left:120%; transition: left .7s ease, opacity .2s ease;}
+    .btn.primary{background: linear-gradient(135deg, rgba(20,184,166,.32), rgba(79,140,255,.20));
+      border-color: rgba(20,184,166,.35);}
+    .btn.wa{background: linear-gradient(135deg, rgba(34,197,94,.30), rgba(20,184,166,.10));
+      border-color: rgba(34,197,94,.35);}
+
+    .hero{padding:56px 0 24px}
+    .heroGrid{display:grid; grid-template-columns: 1.3fr .7fr; gap:16px; align-items:stretch}
+    @media (max-width: 900px){ .heroGrid{grid-template-columns:1fr} .links{display:none} }
+
+    .cardLight{background: rgba(255,255,255,.92); color: var(--text2);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:20px; box-shadow: var(--shadow);}
+    .heroMain{padding:28px}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px;
+      background: rgba(15,23,42,.06); border:1px solid rgba(15,23,42,.10);
+      color: rgba(15,23,42,.80); font-weight:900; font-size:12px;}
+    h1{margin:14px 0 10px; font-size:44px; line-height:1.06; letter-spacing:-.6px}
+    @media (max-width: 520px){ h1{font-size:34px} }
+    .lead{margin:0; color: rgba(15,23,42,.70); font-size:15px; line-height:1.55}
+    .ctaRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+    .ctaRow .btn{color: var(--text2); border-color: rgba(15,23,42,.10); background: rgba(15,23,42,.05);}
+    .ctaRow .btn:hover{background: rgba(15,23,42,.08);}
+
+    .heroSide{padding:18px}
+    .heroSide h3{margin:0 0 10px; font-size:14px}
+    .mini{display:grid; gap:10px}
+    .miniItem{padding:12px; border-radius:16px; background: rgba(15,23,42,.05); border:1px solid rgba(15,23,42,.10);}
+    .miniItem b{display:block; font-size:13px}
+    .miniItem span{display:block; margin-top:4px; color: rgba(15,23,42,.68); font-size:12px; line-height:1.35}
+
+    section{padding:16px 0 28px}
+    .sectionTitle{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:10px}
+    .sectionTitle h2{margin:0; font-size:18px; color: var(--nightText);}
+    .sectionTitle p{margin:0; color: var(--nightMuted); font-size:13px; font-weight:800;}
+
+    .grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:12px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    .service{padding:16px; border-radius:18px; border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06); backdrop-filter: blur(10px);
+      box-shadow: 0 14px 34px rgba(0,0,0,.18);}
+    .service h4{margin:0 0 6px}
+    .service p{margin:0; color: var(--nightMuted); font-size:13px; line-height:1.35}
+
+    .split{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 900px){ .split{grid-template-columns:1fr} }
+    .info{padding:16px; border-radius:18px; border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06); backdrop-filter: blur(10px);
+      box-shadow: 0 14px 34px rgba(0,0,0,.18);}
+    .info b{color: var(--nightText)}
+    .footer{padding:22px 0 30px; color:var(--nightMuted); font-size:12px}
+
+    /* Specialties dropdown */
+    .specWrap{margin-top:14px; border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06); backdrop-filter: blur(10px); box-shadow: 0 14px 34px rgba(0,0,0,.18);
+    }
+    .specBtn{width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px; cursor:pointer; user-select:none;
+      font-weight:900; color:var(--nightText);
+      background: linear-gradient(90deg, rgba(79,140,255,.14), rgba(255,255,255,.06), rgba(20,184,166,.10));
+      border:none;
+    }
+    .specBtn small{display:block; font-weight:800; color:var(--nightMuted);}
+    .chev{transition: transform .18s ease; font-size:18px;}
+    .specWrap.open .chev{transform: rotate(180deg);}
+    .specPanel{display:none; padding:14px 16px; border-top:1px solid rgba(255,255,255,.12);}
+    .specWrap.open .specPanel{display:block;}
+    .chips{display:flex; flex-wrap:wrap; gap:10px}
+    .chip{padding:10px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.14);
+      background: rgba(11,18,32,.45); color: var(--nightText);
+      font-weight:900; font-size:12px;
+    }
+
+    /* CHAT */
+    .cb-fab{position: fixed; right: 18px; bottom: 18px; z-index: 99999; width: 62px; height: 62px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22); background: linear-gradient(135deg, rgba(20,184,166,.95), rgba(79,140,255,.92));
+      color: white; box-shadow: var(--shadow); cursor: pointer; display:flex; align-items:center; justify-content:center;
+      transition: transform .15s ease, filter .15s ease; animation: cbFloat 2.8s ease-in-out infinite;}
+    .cb-fab:hover{ transform: translateY(-2px); filter: brightness(1.05); }
+    .cb-tooth{font-size:22px; line-height:1; display:inline-block; transform-origin: 70% 70%; animation: cbWave 2.2s ease-in-out infinite;}
+
+    .cb-hint{position:fixed; right:96px; bottom:34px; z-index:99999; max-width:280px; padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.18); background:rgba(11,18,32,.85); color:var(--nightText); box-shadow:var(--shadow);
+      font-size:12px; line-height:1.25; opacity:0; transform: translateY(6px); pointer-events:none; transition: opacity .2s ease, transform .2s ease;}
+    .cb-hint.show{opacity:1; transform: translateY(0);}
+    @media (max-width: 520px){.cb-hint{display:none;}}
+    .cb-panel{position: fixed; right: 18px; bottom: 92px; width: min(380px, calc(100vw - 36px)); height: 560px; max-height: calc(100vh - 120px);
+      background: rgba(11,18,32,.92); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.18); border-radius: 18px; box-shadow: var(--shadow);
+      overflow: hidden; z-index: 99999; color: var(--nightText); display: none;}
+    .cb-panel.open{ display: grid; grid-template-rows: auto 1fr auto; }
+    .cb-header{padding: 12px; background: linear-gradient(90deg, rgba(79,140,255,.20), rgba(11,18,32,.78), rgba(20,184,166,.16));
+      border-bottom: 1px solid rgba(255,255,255,.14); display:flex; align-items:center; justify-content: space-between; gap: 10px;}
+    .cb-title{ display:flex; align-items:center; gap:10px; min-width: 0; }
+    .cb-avatar{width: 36px; height: 36px; border-radius: 999px; background: linear-gradient(135deg, rgba(20,184,166,.9), rgba(79,140,255,.9));
+      display:flex; align-items:center; justify-content:center; font-weight: 900; color: #081321; flex: 0 0 auto;}
+    .cb-title h4{ margin:0; font-size: 14px; line-height:1.1; }
+    .cb-title p{ margin:2px 0 0; font-size: 12px; color: var(--nightMuted); }
+    .cb-actions{ display:flex; gap:8px; align-items:center; }
+    .cb-btn{border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--nightText);
+      border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: 12px; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;}
+    .cb-btn.wa{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.14); }
+    .cb-btn.close{ width: 34px; height:34px; justify-content:center; padding:0; }
+    .cb-messages{ padding: 14px 12px; overflow:auto; display:flex; flex-direction:column; gap:10px; }
+    .cb-row{ display:flex; }
+    .cb-row.user{ justify-content:flex-end; }
+    .cb-row.bot{ justify-content:flex-start; }
+    .cb-bubble{max-width: 86%; padding: 10px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06); font-size: 13px; line-height: 1.25; white-space: pre-wrap; word-wrap: break-word;}
+    .cb-row.user .cb-bubble{ background: rgba(79,140,255,.16); border-color: rgba(79,140,255,.35); }
+    .cb-row.bot .cb-bubble{ background: rgba(20,184,166,.14); border-color: rgba(20,184,166,.30); }
+    .cb-meta{ margin-top:6px; font-size: 11px; color: var(--nightMuted); }
+    .cb-footer{border-top: 1px solid rgba(255,255,255,.14); padding: 10px; background: rgba(15,27,49,.55); display:flex; gap:8px; align-items:center;}
+    .cb-input{flex:1; min-width:0; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06);
+      color: var(--nightText); border-radius: 12px; padding: 10px 10px; outline:none; font-size: 13px;}
+    .cb-send{border: 1px solid rgba(20,184,166,.55); background: rgba(20,184,166,.18); color: var(--nightText);
+      border-radius: 12px; padding: 10px 12px; cursor:pointer; font-weight:900;}
+    @keyframes cbWave{0%,60%,100%{transform:rotate(0deg);} 10%{transform:rotate(14deg);} 20%{transform:rotate(-10deg);} 30%{transform:rotate(12deg);} 40%{transform:rotate(-6deg);} 50%{transform:rotate(6deg);}}
+    @keyframes cbFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-4px);}}
+  </style>
+</head>
+<body>
+  <canvas id="particlesCanvas" aria-hidden="true"></canvas>
+
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#top">
+        <span class="logo">🦷</span>
+        <span>
+          <strong>Clínica Dental</strong>
+          <span>Odontología Integral · Turnos · Urgencias · Resistencia, Chaco</span>
+        </span>
+      </a>
+      <nav class="links" aria-label="Navegación">
+        <a href="#especialidades">Especialidades</a>
+        <a href="#equipo">Equipo</a>
+        <a href="#contacto">Contacto</a>
+        <a class="btn primary" href="#turnos">Pedir turno</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container heroGrid">
+        <div class="cardLight heroMain">
+          <div class="pill">✨ Turnos rápidos · Urgencias · Atención humana</div>
+          <h1>Tu sonrisa, en buenas manos</h1>
+          <p class="lead">Odontología integral con diagnóstico claro y tratamientos modernos. Coordiná tu turno en minutos o consultá por dolor/urgencia.</p>
+          <div class="ctaRow" id="turnos">
+            <a class="btn wa" href="https://wa.me/5493620000000?text=Hola%20quiero%20pedir%20un%20turno" target="_blank" rel="noopener">🟢 Solicitar turno</a>
+            <a class="btn primary" href="#especialidades">🦷 Nuestras especialidades</a>
+            <button class="btn" id="specToggleTop" type="button">📋 ¿Qué hacemos?</button>
+          </div>
+
+          <div class="specWrap" id="specWrapTop" aria-label="Especialidades desplegables">
+            <button class="specBtn" id="specBtnTop" type="button" aria-expanded="false">
+              <span>
+                Nuestras especialidades
+                <small>Ortodoncia · Limpieza · Endodoncia · Extracciones · Implantes…</small>
+              </span>
+              <span class="chev">▾</span>
+            </button>
+            <div class="specPanel" id="specPanelTop">
+              <div class="chips">
+                <span class="chip">🦷 Ortodoncia</span>
+                <span class="chip">🧼 Limpieza / Profilaxis</span>
+                <span class="chip">🦷 Endodoncia</span>
+                <span class="chip">🦷 Extracciones</span>
+                <span class="chip">😁 Estética / Blanqueamiento</span>
+                <span class="chip">🦷 Implantes</span>
+                <span class="chip">🧒 Odontopediatría</span>
+                <span class="chip">🦷 Arreglos / Caries</span>
+              </div>
+              <div style="margin-top:10px; color: var(--nightMuted); font-weight:800; font-size:12px;">
+                Si querés, te hago unas preguntas rápidas y te derivo por WhatsApp para coordinar.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="cardLight heroSide">
+          <h3>Información rápida</h3>
+          <div class="mini">
+            <div class="miniItem"><b>🗓️ Turnos</b><span>Coordinación por chat o WhatsApp.</span></div>
+            <div class="miniItem"><b>🚑 Urgencias</b><span>Dolor fuerte / hinchazón: prioridad inmediata.</span></div>
+            <div class="miniItem"><b>🧼 Prevención</b><span>Limpieza, control y educación en higiene.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="especialidades">
+      <div class="container">
+        <div class="sectionTitle"><h2>Especialidades</h2><p>Lo que hacemos (desplegable)</p></div>
+
+        <div class="specWrap" id="specWrapMid">
+          <button class="specBtn" id="specBtnMid" type="button" aria-expanded="false">
+            <span>
+              Ver especialidades y tratamientos
+              <small>Tocá para desplegar la lista completa</small>
+            </span>
+            <span class="chev">▾</span>
+          </button>
+          <div class="specPanel" id="specPanelMid">
+            <div class="chips">
+              <span class="chip">🦷 Ortodoncia</span>
+              <span class="chip">🧼 Limpieza / Profilaxis</span>
+              <span class="chip">🦷 Endodoncia</span>
+              <span class="chip">🦷 Extracciones</span>
+              <span class="chip">😁 Estética / Blanqueamiento</span>
+              <span class="chip">🦷 Implantes</span>
+              <span class="chip">🧒 Odontopediatría</span>
+              <span class="chip">🦷 Arreglos / Caries</span>
+              <span class="chip">🦷 Prótesis</span>
+              <span class="chip">🩺 Urgencias</span>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn wa" href="https://wa.me/5493620000000?text=Hola%20quiero%20consultar%20por%20un%20tratamiento" target="_blank" rel="noopener">🟢 Consultar por WhatsApp</a>
+              <a class="btn primary" href="#turnos">📅 Solicitar turno</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="grid">
+          <div class="service"><h4>🧼 Limpieza y control</h4><p>Profilaxis, control de encías y prevención de caries.</p></div>
+          <div class="service"><h4>🦷 Arreglos y caries</h4><p>Restauraciones estéticas y funcionales.</p></div>
+          <div class="service"><h4>😁 Estética dental</h4><p>Blanqueamiento y mejoras estéticas (según evaluación).</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="equipo">
+      <div class="container">
+        <div class="sectionTitle"><h2>Equipo de especialistas</h2><p>Nombres de ejemplo (luego los cambiamos)</p></div>
+        <div class="grid">
+          <div class="service"><h4>👩‍⚕️ Dra. Valentina Martínez</h4><p>Odontología General · Controles · Limpiezas</p></div>
+          <div class="service"><h4>👨‍⚕️ Dr. Lucas Fernández</h4><p>Implantología · Prótesis · Rehabilitación</p></div>
+          <div class="service"><h4>👩‍⚕️ Dra. Camila Ríos</h4><p>Ortodoncia · Brackets · Alineadores</p></div>
+          <div class="service"><h4>👨‍⚕️ Dr. Nicolás Suárez</h4><p>Estética dental · Blanqueamiento · Diseño</p></div>
+          <div class="service"><h4>👩‍⚕️ Dra. Martina Gómez</h4><p>Odontopediatría · Atención infantil</p></div>
+          <div class="service"><h4>👨‍⚕️ Dr. Tomás Pereira</h4><p>Endodoncia · Tratamiento de conducto</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <div class="container">
+        <div class="sectionTitle"><h2>Contacto</h2><p>Completá datos reales</p></div>
+        <div class="split">
+          <div class="info"><b>📍 Ubicación</b><br/>Dirección: <b>(completar)</b><br/>Ciudad: <b>Resistencia, Chaco</b></div>
+          <div class="info"><b>📞 WhatsApp</b><br/>+5493620000000<br/>Email: <b>(completar)</b></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer"><div class="container">© Clínica Dental · Demo v3 (especialidades desplegables + CTA turno).</div></div>
+  </main>
+
+  <button class="cb-fab" id="cbFab" aria-label="Abrir chat"><span class="cb-tooth" aria-hidden="true">🦷🙂</span></button>
+  <div class="cb-hint" id="cbHint">Hola 👋 Soy el asistente. ¿Querés solicitar un turno?</div>
+
+  <div class="cb-panel" id="cbPanel" role="dialog" aria-label="Chat">
+    <div class="cb-header">
+      <div class="cb-title">
+        <div class="cb-avatar">🦷</div>
+        <div style="min-width:0">
+          <h4>Asistente Clínica Dental</h4>
+          <p>Turnos · Dolor · Urgencias</p>
+        </div>
+      </div>
+      <div class="cb-actions">
+        <button class="cb-btn wa" id="cbWhatsApp">🟢 WhatsApp</button>
+        <button class="cb-btn" id="cbClear">🗑️</button>
+        <button class="cb-btn close" id="cbClose">✕</button>
+      </div>
+    </div>
+    <div class="cb-messages" id="cbMessages"></div>
+    <div class="cb-footer">
+      <input class="cb-input" id="cbInput" type="text" placeholder="Escribí tu respuesta..." autocomplete="off" />
+      <button class="cb-send" id="cbSend">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const canvas = document.getElementById("particlesCanvas");
+      const ctx = canvas.getContext("2d");
+      function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+      resize(); addEventListener("resize", resize);
+      const count = 55;
+      const parts = Array.from({length:count}, () => ({
+        x: Math.random()*innerWidth,
+        y: Math.random()*innerHeight,
+        r: Math.random()*2 + 0.6,
+        vx:(Math.random()-0.5)*0.35,
+        vy:(Math.random()-0.5)*0.35
+      }));
+      function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        for (const p of parts){
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0||p.x>canvas.width) p.vx*=-1;
+          if(p.y<0||p.y>canvas.height) p.vy*=-1;
+          ctx.fillStyle="rgba(79,140,255,.30)";
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    (function(){
+      function setup(wrapId, btnId){
+        const wrap = document.getElementById(wrapId);
+        const btn = document.getElementById(btnId);
+        if(!wrap || !btn) return null;
+        function toggle(forceOpen){
+          const open = forceOpen !== undefined ? forceOpen : !wrap.classList.contains('open');
+          wrap.classList.toggle('open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        btn.addEventListener('click', () => toggle());
+        return { toggle };
+      }
+      const top = setup('specWrapTop','specBtnTop');
+      setup('specWrapMid','specBtnMid');
+
+      const t = document.getElementById('specToggleTop');
+      if(t && top){
+        t.addEventListener('click', () => {
+          top.toggle(true);
+          document.getElementById('specWrapTop')?.scrollIntoView({behavior:'smooth', block:'center'});
+        });
+      }
+    })();
+
+    (function(){
+      const WA_NUMBER = "5493620000000";
+      const fab = document.getElementById('cbFab');
+      const panel = document.getElementById('cbPanel');
+      const closeBtn = document.getElementById('cbClose');
+      const clearBtn = document.getElementById('cbClear');
+      const waBtn = document.getElementById('cbWhatsApp');
+      const list = document.getElementById('cbMessages');
+      const input = document.getElementById('cbInput');
+      const send = document.getElementById('cbSend');
+      const hint = document.getElementById('cbHint');
+
+      const STORAGE_KEY = 'odonto_chat_messages_v3';
+      const FLOW_KEY = 'odonto_chat_flow_v3';
+
+      function nowTime(){
+        const d = new Date();
+        return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+      function scrollToBottom(){ list.scrollTop = list.scrollHeight; }
+      function save(messages){ localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); }
+      function load(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }catch(e){ return []; } }
+      function saveFlow(flow){ localStorage.setItem(FLOW_KEY, JSON.stringify(flow)); }
+      function loadFlow(){ try{ return JSON.parse(localStorage.getItem(FLOW_KEY)) || null; }catch(e){ return null; } }
+      function clearFlow(){ localStorage.removeItem(FLOW_KEY); }
+
+      function addBubble(role, text, time = nowTime(), persist = true){
+        const row = document.createElement('div');
+        row.className = 'cb-row ' + (role === 'user' ? 'user' : 'bot');
+        const bubble = document.createElement('div'); bubble.className = 'cb-bubble';
+        const content = document.createElement('div'); content.textContent = text;
+        const meta = document.createElement('div'); meta.className = 'cb-meta'; meta.textContent = time;
+        bubble.appendChild(content); bubble.appendChild(meta); row.appendChild(bubble);
+        list.appendChild(row); scrollToBottom();
+        if(persist){ const messages = load(); messages.push({ role, text, time }); save(messages); }
+      }
+
+      function render(messages){ list.innerHTML = ''; messages.forEach(m => addBubble(m.role, m.text, m.time, false)); scrollToBottom(); }
+
+      function showHint(){ if(!hint) return; hint.classList.add('show'); }
+      function hideHint(){ if(!hint) return; hint.classList.remove('show'); }
+      setTimeout(() => { if(!panel.classList.contains('open')) showHint(); }, 1200);
+
+      function openWA(prefill){
+        const msg = encodeURIComponent(prefill || "Hola, quiero pedir un turno");
+        window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank', 'noopener');
+      }
+
+      function normalizeYesNo(t){
+        const s = (t||"").trim().toLowerCase();
+        const yes = ["si","sí","s","ok","dale","yes","claro","correcto"];
+        const no  = ["no","n","negativo","nop","nope"];
+        if (yes.includes(s)) return "yes";
+        if (no.includes(s)) return "no";
+        return null;
+      }
+
+      function startFlow(){
+        const flow = { step: 0, data: { nombre:"", motivo:"", dia:"", hora:"", dolor:"", urgente:"" } };
+        saveFlow(flow);
+        addBubble('bot', "Perfecto 👋 Vamos a agendar tu turno.\n1) ¿Cómo te llamás?");
+      }
+
+      function buildSummary(flow){
+        const d = flow.data;
+        return (
+          "Hola, quiero agendar un turno en Clínica Dental.\n" +
+          "Nombre: " + (d.nombre||"-") + "\n" +
+          "Motivo: " + (d.motivo||"-") + "\n" +
+          "Día: " + (d.dia||"-") + "\n" +
+          "Horario: " + (d.hora||"-") + "\n" +
+          "Dolor: " + (d.dolor||"-") + "\n" +
+          "¿Urgente?: " + (d.urgente||"-")
+        );
+      }
+
+      function emergencyAdvice(){
+        return "🚑 Si hay dolor MUY fuerte, sangrado o hinchazón importante, te derivamos ya para priorizarte.";
+      }
+
+      async function handleSend(){
+        const text = (input.value || '').trim();
+        if(!text) return;
+        addBubble('user', text);
+        input.value = '';
+
+        let flow = loadFlow();
+        if(!flow){ startFlow(); return; }
+
+        const step = flow.step;
+        const yn = normalizeYesNo(text);
+
+        if(step === 0){
+          flow.data.nombre = text; flow.step = 1; saveFlow(flow);
+          addBubble('bot', "2) ¿Qué tratamiento necesitás? (ej: ortodoncia, limpieza, caries, dolor, endodoncia)");
+          return;
+        }
+        if(step === 1){
+          flow.data.motivo = text; flow.step = 2; saveFlow(flow);
+          addBubble('bot', "3) ¿Qué día podés? (ej: lunes, martes, o fecha)");
+          return;
+        }
+        if(step === 2){
+          flow.data.dia = text; flow.step = 3; saveFlow(flow);
+          addBubble('bot', "4) ¿En qué horario te va mejor? (mañana / tarde / o una hora)");
+          return;
+        }
+        if(step === 3){
+          flow.data.hora = text; flow.step = 4; saveFlow(flow);
+          addBubble('bot', "5) ¿Sentís mucho dolor? (SI/NO)");
+          return;
+        }
+        if(step === 4){
+          if(!yn){ addBubble('bot', "Respondeme SI o NO 🙂 ¿Sentís mucho dolor?"); return; }
+          flow.data.dolor = (yn === "yes" ? "SI" : "NO"); flow.step = 5; saveFlow(flow);
+          addBubble('bot', "6) ¿Es urgente? (SI/NO)");
+          return;
+        }
+        if(step === 5){
+          if(!yn){ addBubble('bot', "Respondeme SI o NO 🙂 ¿Es urgente?"); return; }
+          flow.data.urgente = (yn === "yes" ? "SI" : "NO"); saveFlow(flow);
+
+          if(yn === "yes"){
+            addBubble('bot', emergencyAdvice() + "\n✅ Te paso por WhatsApp para priorizarte.");
+            setTimeout(() => openWA(buildSummary(flow)), 800);
+            clearFlow(); return;
+          }
+          addBubble('bot', "✅ Listo. Te paso por WhatsApp para confirmar el turno y disponibilidad.");
+          setTimeout(() => openWA(buildSummary(flow)), 800);
+          clearFlow(); return;
+        }
+      }
+
+      function open(){ panel.classList.add('open'); input.focus(); scrollToBottom(); hideHint(); }
+      function close(){ panel.classList.remove('open'); showHint(); }
+
+      fab.addEventListener('click', () => { if(panel.classList.contains('open')) close(); else open(); });
+      closeBtn.addEventListener('click', close);
+      send.addEventListener('click', handleSend);
+      input.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleSend(); });
+
+      waBtn.addEventListener('click', () => {
+        const msgs = load().filter(m => m.role === 'user');
+        const last = msgs.length ? msgs[msgs.length - 1].text : "";
+        openWA(last ? ("Hola, te escribo desde la web. Mi consulta: " + last) : "Hola, quiero solicitar un turno");
+      });
+
+      clearBtn.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        clearFlow();
+        render([]);
+        addBubble('bot', '¡Listo! Chat borrado. ¿Querés solicitar un turno?', nowTime(), false);
+      });
+
+      const msgs = load();
+      if(msgs.length){ render(msgs); }
+      else{
+        addBubble('bot',
+`Hola 👋 Soy el asistente de Clínica Dental.
+Puedo mostrarte especialidades, ayudarte a solicitar un turno o derivarte por urgencia.
+Escribime cualquier cosa para empezar 🙂`,
+          nowTime(), false
+        );
+      }
+    })();
+  </script>
+</body>
+</html>
